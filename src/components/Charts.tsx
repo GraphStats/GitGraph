@@ -26,6 +26,8 @@ export const LanguageChart = ({ repos }: { repos: RepoStats[] }) => {
         .sort((a, b) => b.value - a.value)
         .slice(0, 6);
 
+    const totalRepos = data.reduce((acc, item) => acc + item.value, 0);
+
     return (
         <div className="chart-card">
             <h3 style={{ marginBottom: '1.5rem', fontWeight: 700 }}>Top Languages</h3>
@@ -47,10 +49,10 @@ export const LanguageChart = ({ repos }: { repos: RepoStats[] }) => {
                         </Pie>
                         <Tooltip
                             contentStyle={CustomTooltipStyle}
-                            formatter={(value: number) => {
-                                const total = data.reduce((acc, item) => acc + item.value, 0);
-                                const percent = ((value / total) * 100).toFixed(1);
-                                return [`${value} repos (${percent}%)`];
+                            formatter={(value: any) => {
+                                if (typeof value !== 'number') return [value, ''];
+                                const percent = ((value / totalRepos) * 100).toFixed(1);
+                                return [`${value} repos`, `Share: ${percent}%`];
                             }}
                         />
                         <Legend />
@@ -222,6 +224,8 @@ export const RepoLanguageChart = ({ languages }: { languages: Record<string, num
         .sort((a, b) => b.value - a.value)
         .slice(0, 6);
 
+    const totalBytes = data.reduce((acc, item) => acc + item.value, 0);
+
     return (
         <div className="chart-card">
             <h3 style={{ marginBottom: '1.5rem', fontWeight: 700 }}>Répartition des Langages</h3>
@@ -243,9 +247,9 @@ export const RepoLanguageChart = ({ languages }: { languages: Record<string, num
                         </Pie>
                         <Tooltip
                             contentStyle={CustomTooltipStyle}
-                            formatter={(value: number) => {
-                                const total = data.reduce((acc, item) => acc + item.value, 0);
-                                const percent = ((value / total) * 100).toFixed(1);
+                            formatter={(value: any) => {
+                                if (typeof value !== 'number') return [value, ''];
+                                const percent = ((value / totalBytes) * 100).toFixed(1);
                                 const formattedValue = value > 1024 * 1024
                                     ? `${(value / (1024 * 1024)).toFixed(2)} MB`
                                     : `${(value / 1024).toFixed(2)} KB`;
