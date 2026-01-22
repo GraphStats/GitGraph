@@ -1,9 +1,17 @@
 import { PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, Legend, AreaChart, Area, Brush } from 'recharts';
-import { type RepoStats } from '../api/github.js';
+import { type RepoStats } from '../services/github';
 import { useState } from 'react';
 import { BarChart2, TrendingUp, AlertCircle, Clock } from 'lucide-react';
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8', '#82ca9d'];
+
+const CustomTooltipStyle = {
+    borderRadius: '12px',
+    border: '1px solid var(--border)',
+    boxShadow: 'var(--shadow)',
+    background: 'var(--surface)',
+    color: 'var(--text-main)'
+};
 
 export const LanguageChart = ({ repos }: { repos: RepoStats[] }) => {
     const langData = repos.reduce((acc: Record<string, number>, repo) => {
@@ -37,7 +45,7 @@ export const LanguageChart = ({ repos }: { repos: RepoStats[] }) => {
                                 <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                             ))}
                         </Pie>
-                        <Tooltip />
+                        <Tooltip contentStyle={CustomTooltipStyle} />
                         <Legend />
                     </PieChart>
                 </ResponsiveContainer>
@@ -61,10 +69,10 @@ export const StarsChart = ({ repos }: { repos: RepoStats[] }) => {
             <div style={{ height: '300px', minWidth: 0 }}>
                 <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-                        <XAxis dataKey="name" />
-                        <YAxis />
-                        <Tooltip />
-                        <Bar dataKey="stars" fill="var(--primary)" radius={0} />
+                        <XAxis dataKey="name" stroke="var(--text-muted)" tick={{ fontSize: 10 }} />
+                        <YAxis stroke="var(--text-muted)" tick={{ fontSize: 10 }} />
+                        <Tooltip contentStyle={CustomTooltipStyle} />
+                        <Bar dataKey="stars" fill="var(--primary)" radius={[4, 4, 0, 0]} />
                     </BarChart>
                 </ResponsiveContainer>
             </div>
@@ -77,15 +85,12 @@ export const CommitChart = ({ activity }: { activity: any[] }) => {
 
     const safeActivity = activity || [];
 
-    // On traite les 52 semaines pour ne rien rater
     const fullYearData = safeActivity.map(week => ({
         week: new Date(week.week * 1000).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }),
         commits: week.total,
         timestamp: week.week
     }));
 
-    // On affiche par défaut les 6 derniers mois mais on garde tout l'historique dispo via le Brush
-    // On traite les 52 semaines pour ne rien rater
     const hasEverHadCommits = fullYearData.some(d => d.commits > 0);
 
     if (safeActivity.length === 0) {
@@ -134,7 +139,7 @@ export const CommitChart = ({ activity }: { activity: any[] }) => {
                             borderRadius: '6px',
                             background: style === 'bar' ? 'var(--surface)' : 'transparent',
                             color: style === 'bar' ? 'var(--primary)' : 'var(--text-muted)',
-                            boxShadow: style === 'bar' ? '0 2px 4px rgba(0,0,0,0.05)' : 'none'
+                            boxShadow: style === 'bar' ? 'var(--shadow)' : 'none'
                         }}
                     >
                         <BarChart2 size={18} />
@@ -146,7 +151,7 @@ export const CommitChart = ({ activity }: { activity: any[] }) => {
                             borderRadius: '6px',
                             background: style === 'line' ? 'var(--surface)' : 'transparent',
                             color: style === 'line' ? 'var(--primary)' : 'var(--text-muted)',
-                            boxShadow: style === 'line' ? '0 2px 4px rgba(0,0,0,0.05)' : 'none'
+                            boxShadow: style === 'line' ? 'var(--shadow)' : 'none'
                         }}
                     >
                         <TrendingUp size={18} />
@@ -158,12 +163,10 @@ export const CommitChart = ({ activity }: { activity: any[] }) => {
                 <ResponsiveContainer width="100%" height="100%">
                     {style === 'bar' ? (
                         <BarChart data={fullYearData}>
-                            <XAxis dataKey="week" tick={{ fontSize: 10 }} interval={4} />
-                            <YAxis tick={{ fontSize: 11 }} />
-                            <Tooltip
-                                contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)' }}
-                            />
-                            <Bar dataKey="commits" fill="var(--primary)" radius={0} />
+                            <XAxis dataKey="week" tick={{ fontSize: 10, fill: 'var(--text-muted)' }} stroke="var(--border)" interval={4} />
+                            <YAxis tick={{ fontSize: 11, fill: 'var(--text-muted)' }} stroke="var(--border)" />
+                            <Tooltip contentStyle={CustomTooltipStyle} />
+                            <Bar dataKey="commits" fill="var(--primary)" radius={[2, 2, 0, 0]} />
                             <Brush
                                 dataKey="week"
                                 height={30}
@@ -180,13 +183,11 @@ export const CommitChart = ({ activity }: { activity: any[] }) => {
                                     <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
                                 </linearGradient>
                             </defs>
-                            <XAxis dataKey="week" tick={{ fontSize: 10 }} interval={4} />
-                            <YAxis tick={{ fontSize: 11 }} />
-                            <Tooltip
-                                contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)' }}
-                            />
+                            <XAxis dataKey="week" tick={{ fontSize: 10, fill: 'var(--text-muted)' }} stroke="var(--border)" interval={4} />
+                            <YAxis tick={{ fontSize: 11, fill: 'var(--text-muted)' }} stroke="var(--border)" />
+                            <Tooltip contentStyle={CustomTooltipStyle} />
                             <Area
-                                type="linear"
+                                type="monotone"
                                 dataKey="commits"
                                 stroke="#10b981"
                                 strokeWidth={3}
@@ -233,7 +234,7 @@ export const RepoLanguageChart = ({ languages }: { languages: Record<string, num
                                 <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                             ))}
                         </Pie>
-                        <Tooltip />
+                        <Tooltip contentStyle={CustomTooltipStyle} />
                         <Legend />
                     </PieChart>
                 </ResponsiveContainer>
