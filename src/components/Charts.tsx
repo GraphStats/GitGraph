@@ -45,7 +45,14 @@ export const LanguageChart = ({ repos }: { repos: RepoStats[] }) => {
                                 <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                             ))}
                         </Pie>
-                        <Tooltip contentStyle={CustomTooltipStyle} />
+                        <Tooltip
+                            contentStyle={CustomTooltipStyle}
+                            formatter={(value: number) => {
+                                const total = data.reduce((acc, item) => acc + item.value, 0);
+                                const percent = ((value / total) * 100).toFixed(1);
+                                return [`${value} repos (${percent}%)`];
+                            }}
+                        />
                         <Legend />
                     </PieChart>
                 </ResponsiveContainer>
@@ -234,7 +241,17 @@ export const RepoLanguageChart = ({ languages }: { languages: Record<string, num
                                 <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                             ))}
                         </Pie>
-                        <Tooltip contentStyle={CustomTooltipStyle} />
+                        <Tooltip
+                            contentStyle={CustomTooltipStyle}
+                            formatter={(value: number) => {
+                                const total = data.reduce((acc, item) => acc + item.value, 0);
+                                const percent = ((value / total) * 100).toFixed(1);
+                                const formattedValue = value > 1024 * 1024
+                                    ? `${(value / (1024 * 1024)).toFixed(2)} MB`
+                                    : `${(value / 1024).toFixed(2)} KB`;
+                                return [formattedValue, `Share: ${percent}%`];
+                            }}
+                        />
                         <Legend />
                     </PieChart>
                 </ResponsiveContainer>
