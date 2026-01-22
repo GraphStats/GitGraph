@@ -1,4 +1,4 @@
-import { Github, FileText, ShieldAlert } from 'lucide-react'
+import { Github } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import './Navbar.css'
 
