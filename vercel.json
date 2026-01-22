@@ -1,0 +1,12 @@
+{
+    "rewrites": [
+        {
+            "source": "/api/github/(.*)",
+            "destination": "/api/github"
+        },
+        {
+            "source": "/(.*)",
+            "destination": "/index.html"
+        }
+    ]
+}
