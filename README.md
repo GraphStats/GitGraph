@@ -38,5 +38,3 @@ GitGraph utilise une palette de couleurs "White Mode" avec :
 - Un bleu vibrant (`#0066ff`) pour les accents.
 - Des ombres douces et des bordures légères.
 - Des polices modernes (Inter).
-
-Développé avec ❤️ par Antigravity.
