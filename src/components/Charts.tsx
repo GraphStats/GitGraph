@@ -1,5 +1,5 @@
 import { PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, Legend, AreaChart, Area, Brush } from 'recharts';
-import { type RepoStats } from '../services/github';
+import { type RepoStats } from '../api/github.js';
 import { useState } from 'react';
 import { BarChart2, TrendingUp, AlertCircle, Clock } from 'lucide-react';
 
